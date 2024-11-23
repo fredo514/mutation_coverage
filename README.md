@@ -1,12 +1,18 @@
 # mutation_coverage
 environment for assessment of test completeness
 
+## Gettings used to Mull
 ```
 # level 1
 cd hello-world
-clang-12 -fexperimental-new-pass-manager -fpass-plugin=/usr/lib/mull-ir-frontend-12 -g -grecord-command-line main.c -o hello-world
-mull-runner-12 -ide-reporter-show-killed hello-world
 
+clang-12 -fexperimental-new-pass-manager -fpass-plugin=/usr/lib/mull-ir-frontend-12 -g -grecord-command-line main.c -o hello-world
+
+mull-runner-12 -ide-reporter-show-killed hello-world
+```
+
+## Running Mull on a unity test harness
+```
 # level 2
 cd example
 
@@ -26,4 +32,12 @@ llc-12 -filetype=obj test_module_runner.bc
 clang-12 module.o unity.o test_module.o test_module_runner.o -o linked_tests
 
 mull-runner-12 -ide-reporter-show-killed linked_tests
+```
+
+## Pruning equivalent mutants using KLEE
+```
+mull-runner-12 --reporters Elements --report-name mutations linked_tests
+
+../detect_equivalent_mutants.py --mull-report mull-report --klee-output klee-out
+python equivalent_mutant_detector.py --mull-report mull-report/mutations.json --test-executable build/linked_tests --output mull-report/equivalent_mutants.json
 ```
