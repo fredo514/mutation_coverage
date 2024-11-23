@@ -38,6 +38,5 @@ mull-runner-12 -ide-reporter-show-killed linked_tests
 ```
 mull-runner-12 --reporters Elements --report-name mutations linked_tests
 
-../detect_equivalent_mutants.py --mull-report mull-report --klee-output klee-out
-python equivalent_mutant_detector.py --mull-report mull-report/mutations.json --test-executable build/linked_tests --output mull-report/equivalent_mutants.json
+python equivalent_mutant_detector.py --mull-report mutations.json --test-executable build/linked_tests --output equivalent_mutants.json
 ```
