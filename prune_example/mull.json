@@ -1,0 +1,12 @@
+reporters:
+ - Elements
+mutators:
+ - cxx_all
+excludePaths: # support regex
+ - unity.c
+ - test_module.c
+ - test_module_runner.c
+timeout: # milliseconds
+ - 10000 # 10 seconds
+report-name: 
+ - mutations

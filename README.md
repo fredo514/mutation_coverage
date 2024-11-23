@@ -1,42 +1,88 @@
 # mutation_coverage
 environment for assessment of test completeness
 
+## Installing Dependencies
+Run Docker container described in Dockerfile
+* Ruby 2.7.8 (Ceedling 0.31 doesn't run on Ruby 3)
+* Ceedling
+* LLVM
+* Mull
+* KLEE
+
 ## Gettings used to Mull
+### Level 1: Running Mull
+Go to the `hello-world` folder.
+> cd hello-world
+
+Compile `main.c` with the Mull LLVM frontend.
+> clang-12 -fexperimental-new-pass-manager -fpass-plugin=/usr/lib/mull-ir-frontend-12 -g -grecord-command-line main.c -o hello-world
+
+Run Mull on the resulting executable.
+> mull-runner-12 -ide-reporter-show-killed hello-world
+
+### Level 2: Running Mull on a unity test harness
+Go to the `mull-unity_example` folder.
+> cd mull-unity_example
+
+Run Ceedling to generate the test runner.
+> ceedling test:all
+
+Compile the module under test (`module.c`) to bitcode with the Mull LLVM frontend and convert it to ana object file.
 ```
-# level 1
-cd hello-world
-
-clang-12 -fexperimental-new-pass-manager -fpass-plugin=/usr/lib/mull-ir-frontend-12 -g -grecord-command-line main.c -o hello-world
-
-mull-runner-12 -ide-reporter-show-killed hello-world
-```
-
-## Running Mull on a unity test harness
-```
-# level 2
-cd example
-
 clang-12 -emit-llvm -fexperimental-new-pass-manager -fpass-plugin=/usr/lib/mull-ir-frontend-12 -g -grecord-command-line -Isrc src/module.c -c -o module.bc
 
-clang-12 -emit-llvm -I/usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/ /usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/unity.c -c -o unity.bc
+llc-12 -filetype=obj module.bc
+```
 
-clang-12 -emit-llvm -Isrc -I/usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/ test/test_module.c -c -o test_module.bc
+Compile the rest of the harness files (`unity.c`, `test_module.c` and `test_module_runner.c`) to object files.
+```
+clang-12 -I/usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/ /usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/unity.c -c
 
-clang-12 -emit-llvm -Isrc -I/usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/ build/test/runners/test_module_runner.c -c -o test_module_runner.bc
+clang-12 -Isrc -I/usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/ test/test_module.c -c
+
+clang-12 --Isrc -I/usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/ build/test/runners/test_module_runner.c -c
+```
+
+Link all the object files into an executable.
+> clang-12 module.o unity.o test_module.o test_module_runner.o -o linked_tests
+
+Run Mull on the resulting executable.
+> mull-runner-12 -ide-reporter-show-killed linked_tests
+
+### Level 3: Pruning equivalent mutants using KLEE
+Go to the `rune_example` folder.
+> cd prune_example
+
+Run Ceedling to generate the test runner.
+> ceedling test:all
+
+Compile the module under test (`module.c`) to bitcode with the Mull LLVM frontend and convert it to ana object file.
+```
+clang-12 -emit-llvm -fexperimental-new-pass-manager -fpass-plugin=/usr/lib/mull-ir-frontend-12 -g -grecord-command-line -Isrc src/module.c -c -o module.bc
 
 llc-12 -filetype=obj module.bc
-llc-12 -filetype=obj unity.bc
-llc-12 -filetype=obj test_module.bc
-llc-12 -filetype=obj test_module_runner.bc
-
-clang-12 module.o unity.o test_module.o test_module_runner.o -o linked_tests
-
-mull-runner-12 -ide-reporter-show-killed linked_tests
 ```
 
-## Pruning equivalent mutants using KLEE
+Compile the rest of the harness files (`unity.c`, `test_module.c` and `test_module_runner.c`) to object files.
+```
+clang-12 -I/usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/ /usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/unity.c -c
+
+clang-12 -Isrc -I/usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/ test/test_module.c -c
+
+clang-12 --Isrc -I/usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/ build/test/runners/test_module_runner.c -c
+```
+
+Link all the object files into an executable.
+> clang-12 module.o unity.o test_module.o test_module_runner.o -o linked_tests
+
+For convenience, the previous steps have been grouped into `build.sh` bash script.
+
+Run Mull with the provided configuration file.
+> mull-runner-12 linked_tests
+
+Run the pruning script on the mull report.
+> python equivalent_mutant_detector.py --mull-report mutations.json --output equivalent_mutants.json
+
 ```
 mull-runner-12 --reporters Elements --report-name mutations linked_tests
-
-python equivalent_mutant_detector.py --mull-report mutations.json --test-executable build/linked_tests --output equivalent_mutants.json
 ```
