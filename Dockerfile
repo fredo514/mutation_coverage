@@ -13,7 +13,20 @@ RUN apt-get update && \
             gcovr \
             valgrind \
             libc-dev \
-            gdb
+            gdb \
+            lsb-release \
+            wget \
+            software-properties-common \
+            gnupg
+
+# install llvm-12
+RUN wget https://apt.llvm.org/llvm.sh
+RUN chmod +x llvm.sh
+RUN ./llvm.sh 12
+
+# install mull
+RUN wget https://dl.cloudsmith.io/public/mull-project/mull-stable/deb/ubuntu/pool/focal/main/M/Mu/mull-12_0.23.0/Mull-12-0.23.0-LLVM-12.0-ubuntu-20.04.deb
+RUN apt install ./Mull-12-0.23.0-LLVM-12.0-ubuntu-20.04.deb 
 
 # install ceedling
 RUN gem install ceedling
