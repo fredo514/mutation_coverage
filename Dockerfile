@@ -2,13 +2,20 @@ FROM ruby:2.7.8
 
 # Download tools
 RUN apt-get update && \
-         apt-get clean && \ 
-         apt-get install -y \
-             build-essential \
-             wget \
-             curl \
-             clang-format
+        apt-get clean && \ 
+        apt-get install -y \
+            build-essential \
+            wget \
+            curl \
+            clang-format \
+            coreutils \
+            gcc \
+            gcovr \
+            valgrind \
+            libc-dev \
+            gdb
 
+# install ceedling
 RUN gem install ceedling
 
 RUN mkdir /project
