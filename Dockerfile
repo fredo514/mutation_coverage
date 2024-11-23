@@ -6,7 +6,8 @@ RUN apt-get update && \
          apt-get install -y \
              build-essential \
              wget \
-             curl
+             curl \
+             clang-format
 
 RUN gem install ceedling
 
