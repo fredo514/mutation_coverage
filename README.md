@@ -29,7 +29,7 @@ Run Ceedling to generate the test runner.
 
 Compile the module under test (`module.c`) to bitcode with the Mull LLVM frontend and convert it to ana object file.
 ```
-clang-12 -emit-llvm -fexperimental-new-pass-manager -fpass-plugin=/usr/lib/mull-ir-frontend-12 -g -grecord-command-line -Isrc src/module.c -c -o module.bc
+clang-12 -emit-llvm -g -grecord-command-line -c -fexperimental-new-pass-manager -fpass-plugin=/usr/lib/mull-ir-frontend-12 -Isrc src/module.c -o module.bc
 
 llc-12 -filetype=obj module.bc
 ```
@@ -58,7 +58,7 @@ Run Ceedling to generate the test runner.
 
 Compile the module under test (`module.c`) to bitcode with the Mull LLVM frontend and convert it to ana object file.
 ```
-clang-12 -emit-llvm -fexperimental-new-pass-manager -fpass-plugin=/usr/lib/mull-ir-frontend-12 -g -grecord-command-line -Isrc src/module.c -c -o module.bc
+clang-12 -emit-llvm -g -grecord-command-line -fexperimental-new-pass-manager -fpass-plugin=/usr/lib/mull-ir-frontend-12 -Isrc src/module.c -c -o module.bc
 
 llc-12 -filetype=obj module.bc
 ```
@@ -82,7 +82,3 @@ Run Mull with the provided configuration file.
 
 Run the pruning script on the mull report.
 > python ../detect_equivalent_mutant.py --mull-report mutation-report.json --output equivalent_mutants.json
-
-```
-mull-runner-12 --reporters Elements --report-name mutations linked_tests
-```

@@ -1,3 +1,4 @@
+# start from a base debian install with latest ruby2
 FROM ruby:2.7.8
 
 # Download tools
@@ -9,7 +10,6 @@ RUN apt-get update && \
             curl \
             file \
             git \
-            clang-format \
             coreutils \
             gcc \
             gcovr \
@@ -17,7 +17,6 @@ RUN apt-get update && \
             libc-dev \
             gdb \
             lsb-release \
-            wget \
             software-properties-common \
             gnupg \
             python \
@@ -33,9 +32,14 @@ RUN ./llvm.sh 12
 RUN wget https://dl.cloudsmith.io/public/mull-project/mull-stable/deb/ubuntu/pool/focal/main/M/Mu/mull-12_0.23.0/Mull-12-0.23.0-LLVM-12.0-ubuntu-20.04.deb
 RUN apt install ./Mull-12-0.23.0-LLVM-12.0-ubuntu-20.04.deb 
 
-# install klee
-RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-RUN brew install klee
+# install brew and klee
+RUN wget https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+RUN chmod +x install.sh
+RUN CI=1 ./install.sh
+RUN echo >> /root/.bashrc && \
+    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /root/.bashrc && \
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" && \
+    brew install klee
 
 # install ceedling
 RUN gem install ceedling

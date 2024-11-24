@@ -11,7 +11,7 @@ def detect_equivalent_mutants(mull_report_path, output_path):
     equivalent_mutants = []
     
     for file in mutation_report['files']:
-        print('Testing {file}')
+        print('Analyzing surviving mutants in {}'.format(file))
         
         # Find surviving mutants
         surviving_mutants = []
@@ -20,10 +20,13 @@ def detect_equivalent_mutants(mull_report_path, output_path):
                 surviving_mutants.append(mutant)
 
         for mutant in surviving_mutants:
-            print('Testing {mutant}')
+            print('   Analyzing mutation {} at line {}, column {}'.format(mutant['id'], mutant['location']['start']['line'], mutant['location']['start']['column']))
 
             # Run test executable to confirm survival
             # Run KLEE on the mutated program
+            # Run KLEE on the mutated program
+
+            
             # Save equivalent mutants to output file
 
     # apply patch

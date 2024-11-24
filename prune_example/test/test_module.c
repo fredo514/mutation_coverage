@@ -6,5 +6,7 @@ void SetUp(void) {}
 void TearDown(void) {}
 
 void test_1(void) { 
-    // TEST_ASSERT_EQUAL(5, add(2, 3)); 
+    TEST_ASSERT_FALSE(is_adult(20)); 
+    TEST_ASSERT_TRUE(is_adult(22)); 
+    // TEST_ASSERT_TRUE(is_adult(21)); 
 }

@@ -1,5 +1,5 @@
 #include "module.h"
 
-int add(int x, int y) {
-    return x+y;
+bool is_adult(unsigned int age) {
+    return age >= 21;
 }
