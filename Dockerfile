@@ -7,6 +7,8 @@ RUN apt-get update && \
             build-essential \
             wget \
             curl \
+            file \
+            git \
             clang-format \
             coreutils \
             gcc \
@@ -17,7 +19,10 @@ RUN apt-get update && \
             lsb-release \
             wget \
             software-properties-common \
-            gnupg
+            gnupg \
+            python \
+            gcc-multilib \
+            g++-multilib
 
 # install llvm-12
 RUN wget https://apt.llvm.org/llvm.sh
@@ -27,6 +32,10 @@ RUN ./llvm.sh 12
 # install mull
 RUN wget https://dl.cloudsmith.io/public/mull-project/mull-stable/deb/ubuntu/pool/focal/main/M/Mu/mull-12_0.23.0/Mull-12-0.23.0-LLVM-12.0-ubuntu-20.04.deb
 RUN apt install ./Mull-12-0.23.0-LLVM-12.0-ubuntu-20.04.deb 
+
+# install klee
+RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+RUN brew install klee
 
 # install ceedling
 RUN gem install ceedling

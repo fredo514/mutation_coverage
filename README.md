@@ -78,10 +78,10 @@ Link all the object files into an executable.
 For convenience, the previous steps have been grouped into `build.sh` bash script.
 
 Run Mull with the provided configuration file.
-> mull-runner-12 linked_tests
+> mull-runner-12 --reporters=Elements --reporters=Patches --report-name=mutation-report linked_tests
 
 Run the pruning script on the mull report.
-> python equivalent_mutant_detector.py --mull-report mutations.json --output equivalent_mutants.json
+> python ../detect_equivalent_mutant.py --mull-report mutation-report.json --output equivalent_mutants.json
 
 ```
 mull-runner-12 --reporters Elements --report-name mutations linked_tests

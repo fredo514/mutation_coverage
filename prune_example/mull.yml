@@ -1,0 +1,8 @@
+mutators:
+  - cxx_all
+excludePaths: # support regex
+  - /usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/unity.c
+  - test/test_module.c
+  - build/test/runners/test_module_runner.c
+timeout: # milliseconds
+  10000 # 10 seconds
