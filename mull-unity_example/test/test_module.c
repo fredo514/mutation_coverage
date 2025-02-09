@@ -5,6 +5,4 @@ void SetUp(void) {}
 
 void TearDown(void) {}
 
-void test_1(void) { 
-    // TEST_ASSERT_EQUAL(5, add(2, 3)); 
-}
+void test_1(void) { TEST_ASSERT_EQUAL(5, add(2, 3)); }

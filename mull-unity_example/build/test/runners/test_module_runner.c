@@ -2,6 +2,11 @@
 
 /*=======Automagically Detected Files To Include=====*/
 #include "unity.h"
+/* injected defines for unity settings, etc */
+#ifndef UNITY_EXCLUDE_FLOAT
+#define UNITY_EXCLUDE_FLOAT
+#endif /* UNITY_EXCLUDE_FLOAT */
+#include "module.h"
 
 int GlobalExpectCount;
 int GlobalVerifyOrder;
@@ -53,7 +58,7 @@ void verifyTest(void)
 static void run_test(UnityTestFunction func, const char* name, UNITY_LINE_TYPE line_num)
 {
     Unity.CurrentTestName = name;
-    Unity.CurrentTestLineNumber = line_num;
+    Unity.CurrentTestLineNumber = (UNITY_UINT) line_num;
 #ifdef UNITY_USE_COMMAND_LINE_ARGS
     if (!UnityTestMatches())
         return;
@@ -78,10 +83,25 @@ static void run_test(UnityTestFunction func, const char* name, UNITY_LINE_TYPE l
 }
 
 /*=======MAIN=====*/
-int main(void)
+ int main(int argc, char** argv)
 {
+#ifdef UNITY_USE_COMMAND_LINE_ARGS
+  int parse_status = UnityParseOptions(argc, argv);
+  if (parse_status != 0)
+  {
+    if (parse_status < 0)
+    {
+      UnityPrint("test_module.");
+      UNITY_PRINT_EOL();
+      UnityPrint("  test_1");
+      UNITY_PRINT_EOL();
+      return 0;
+    }
+    return parse_status;
+  }
+#endif
   UnityBegin("test_module.c");
   run_test(test_1, "test_1", 8);
 
-  return UnityEnd();
+  return UNITY_END();
 }
