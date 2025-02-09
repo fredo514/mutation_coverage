@@ -60,27 +60,27 @@ Run Ceedling to generate the test runner.
 
 Compile the module under test (`module.c`) to bitcode with the Mull LLVM frontend and convert it to ana object file.
 ```
-clang-12 -emit-llvm -g -grecord-command-line -fexperimental-new-pass-manager -fpass-plugin=/usr/lib/mull-ir-frontend-12 -Isrc src/module.c -c -o module.bc
+clang-18 -emit-llvm -g -grecord-command-line -fpass-plugin=/usr/lib/mull-ir-frontend-18 -Isrc src/module.c -c -o module.bc
 
-llc-12 -filetype=obj module.bc
+llc-18 -filetype=obj module.bc
 ```
 
 Compile the rest of the harness files (`unity.c`, `test_module.c` and `test_module_runner.c`) to object files.
 ```
-clang-12 -I/usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/ /usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/unity.c -c
+clang-18 -Ibuild/vendor/unity/src/ build/vendor/unity/src/unity.c -c
 
-clang-12 -Isrc -I/usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/ test/test_module.c -c
+clang-18 -Isrc -Ibuild/vendor/unity/src/ test/test_module.c -c
 
-clang-12 --Isrc -I/usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/ build/test/runners/test_module_runner.c -c
+clang-18 -Isrc -Ibuild/vendor/unity/src/ build/test/runners/test_module_runner.c -c
 ```
 
 Link all the object files into an executable.
-> clang-12 module.o unity.o test_module.o test_module_runner.o -o linked_tests
+> clang-18 module.o unity.o test_module.o test_module_runner.o -o linked_tests
 
 For convenience, the previous steps have been grouped into `build.sh` bash script.
 
 Run Mull with the provided configuration file.
-> mull-runner-12 --reporters=Elements --reporters=Patches --report-name=mutation-report linked_tests
+> mull-runner-18 --reporters=Elements --reporters=Patches --report-name=mutation-report linked_tests
 
 Run the pruning script on the mull report.
 > python ../detect_equivalent_mutant.py --mull-report mutation-report.json --output equivalent_mutants.json

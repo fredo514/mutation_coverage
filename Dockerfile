@@ -37,18 +37,18 @@ ENV PATH="/home/linuxbrew/.linuxbrew/opt/clang-format/bin:$PATH"
             
 # install ceedling
 RUN gem install ceedling
-            
+
 # install llvm
 RUN wget https://apt.llvm.org/llvm.sh
 RUN chmod +x llvm.sh
 RUN ./llvm.sh 18
 
-# # install mull
+# install mull
 RUN wget https://github.com/mull-project/mull/releases/download/0.24.0/Mull-18-0.24.0-LLVM-18.1-ubuntu-24.04.deb
-RUN apt install ./Mull-18-0.24.0-LLVM-18.1-ubuntu-24.04.deb
+RUN apt install -y ./Mull-18-0.24.0-LLVM-18.1-ubuntu-24.04.deb
 
 # # Install klee
-# RUN brew install klee
+RUN brew install klee
 
 # RUN mkdir /project
 
@@ -59,5 +59,5 @@ RUN apt install ./Mull-18-0.24.0-LLVM-18.1-ubuntu-24.04.deb
 # WORKDIR /project
 # ADD . /project
 
-# # When the container launches, run a shell that launches in WORKDIR
-# CMD ["/bin/sh"]
+# When the container launches, run a shell that launches in WORKDIR
+CMD ["/bin/sh"]

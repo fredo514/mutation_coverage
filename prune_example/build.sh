@@ -1,20 +1,15 @@
 ceedling test:all
 
-clang-12 -emit-llvm -g -grecord-command-line -c -fexperimental-new-pass-manager -fpass-plugin=/usr/lib/mull-ir-frontend-12 -Isrc src/module.c -o module.bc
+mkdir build/mull
 
-clang-12 -emit-llvm -g -grecord-command-line -c -I/usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/ /usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/unity.c
+clang-18 -emit-llvm -g -grecord-command-line -c -fpass-plugin=/usr/lib/mull-ir-frontend-18 -Isrc src/module.c -o build/mull/module.bc
 
-clang-12 -emit-llvm -g -grecord-command-line -c -Isrc -I/usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/ test/test_module.c
+llc-18 -filetype=obj build/mull/module.bc
 
-clang-12 -emit-llvm -g -grecord-command-line -c -Isrc -I/usr/local/bundle/gems/ceedling-0.31.1/vendor/unity/src/ build/test/runners/test_module_runner.c
+clang-18 -Ibuild/vendor/unity/src/ build/vendor/unity/src/unity.c -c -o build/mull/unity.o
+clang-18 -Isrc -Ibuild/vendor/unity/src/ test/test_module.c -c -o build/mull/test_module.o
+clang-18 -Isrc -Ibuild/vendor/unity/src/ build/test/runners/test_module_runner.c -c -o build/mull/test_module_runner.o
 
-llvm-link-12 module.bc unity.bc test_module.bc test_module_runner.bc -o linked_tests.bc
+clang-18 build/mull/module.o build/mull/unity.o build/mull/test_module.o build/mull/test_module_runner.o -o build/mull/linked_tests
 
-llc-12 -filetype=obj module.bc
-llc-12 -filetype=obj test_module.bc
-llc-12 -filetype=obj test_module_runner.bc
-llc-12 -filetype=obj unity.bc
-
-clang-12 module.o unity.o test_module.o test_module_runner.o -o linked_tests
-
-mull-runner-12 --reporters=Elements --reporters=Patches --report-name=mutation-report linked_tests
+mull-runner-18 --reporters=Elements --reporters=Patches --report-name=mutation-report build/mull/linked_tests
