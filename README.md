@@ -7,7 +7,6 @@ Run Docker container described in Dockerfile
 * Ceedling
 * LLVM
 * Mull
-* KLEE
 
 ## Gettings used to Mull
 ### Level 1: Running Mull
@@ -51,7 +50,7 @@ Link all the object files into an executable.
 Run Mull on the resulting executable.
 > mull-runner-18 -ide-reporter-show-killed build/mull/linked_tests
 
-### Level 3: Pruning equivalent mutants using KLEE
+### Level 3: Determining if surviving mutants are true positives
 Go to the `prune_example` folder.
 > cd prune_example
 
@@ -77,10 +76,10 @@ clang-18 -Isrc -Ibuild/vendor/unity/src/ build/test/runners/test_module_runner.c
 Link all the object files into an executable.
 > clang-18 module.o unity.o test_module.o test_module_runner.o -o linked_tests
 
-For convenience, the previous steps have been grouped into `build.sh` bash script.
-
 Run Mull with the provided configuration file.
 > mull-runner-18 --reporters=Elements --reporters=Patches --report-name=mutation-report linked_tests
 
+For convenience, the previous steps have been grouped into `build.sh` bash script.
+
 Run the pruning script on the mull report.
-> python ../detect_equivalent_mutant.py --mull-report mutation-report.json --output equivalent_mutants.json
+> python analyze_mutant.py build/mull/mutation-report.json

@@ -1,6 +1,6 @@
 ceedling test:all
 
-mkdir build/mull
+mkdir -p build/mull
 
 clang-18 -emit-llvm -g -grecord-command-line -c -fpass-plugin=/usr/lib/mull-ir-frontend-18 -Isrc src/module.c -o build/mull/module.bc
 
@@ -12,4 +12,4 @@ clang-18 -Isrc -Ibuild/vendor/unity/src/ build/test/runners/test_module_runner.c
 
 clang-18 build/mull/module.o build/mull/unity.o build/mull/test_module.o build/mull/test_module_runner.o -o build/mull/linked_tests
 
-mull-runner-18 --reporters=Elements --reporters=Patches --report-name=mutation-report build/mull/linked_tests
+mull-runner-18 --reporters=Elements --report-name=mutation-report --report-dir=build/mull build/mull/linked_tests

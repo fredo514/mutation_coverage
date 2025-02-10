@@ -10,7 +10,11 @@ RUN apt-get update && \
             software-properties-common \
             git \
             curl \
-            ruby-full
+            ruby-full \
+            wget \
+            gnupg \
+            clang-format \
+            python3
             # file \
             # coreutils \
             # gcc \
@@ -23,17 +27,17 @@ RUN apt-get update && \
             # g++-multilib
 
 # install homebrew
-RUN export CI=1 && \
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-ENV PATH="/home/linuxbrew/.linuxbrew/bin:${PATH}"
+# RUN export CI=1 && \
+#         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# ENV PATH="/home/linuxbrew/.linuxbrew/bin:${PATH}"
 
 # download more tools
-RUN brew install \
-        wget \
-        gnupg \
-        clang-format
+# RUN brew install \
+#         wget \
+#         gnupg \
+#         clang-format
         
-ENV PATH="/home/linuxbrew/.linuxbrew/opt/clang-format/bin:$PATH"
+# ENV PATH="/home/linuxbrew/.linuxbrew/opt/clang-format/bin:$PATH"
             
 # install ceedling
 RUN gem install ceedling
@@ -48,7 +52,7 @@ RUN wget https://github.com/mull-project/mull/releases/download/0.24.0/Mull-18-0
 RUN apt install -y ./Mull-18-0.24.0-LLVM-18.1-ubuntu-24.04.deb
 
 # # Install klee
-RUN brew install klee
+# RUN brew install klee
 
 # RUN mkdir /project
 
